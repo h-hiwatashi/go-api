@@ -1,10 +1,10 @@
 .PHONY: intodb
 intodb:
-	docker container exec -it go_api bash
+	docker container exec -it go_clean_arch_mysql bash
 
 .PHONY: intogo
 intogo:
-	docker container exec -it go_clean_arch_mysql bash
+	docker container exec -it go_api bash
 
 .PHONY: upd
 upd:
