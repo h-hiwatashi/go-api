@@ -1,1 +1,1 @@
-# go-gin-api
+# go-api
