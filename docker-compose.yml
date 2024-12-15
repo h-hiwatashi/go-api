@@ -1,0 +1,71 @@
+version: "3.9"
+
+# コンテナの設定
+services:
+  web:
+    image: go-clean-arch
+    container_name: go_api
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+
+    # ホスト側のフォルダをマウントする
+    volumes:
+      - .:/app
+
+    working_dir: /app
+
+    tty: true
+
+    depends_on:
+      - db
+
+    ports:
+      - 9090:9090
+
+  db:
+    image: postgres:14.3
+
+    # build:
+    #  「.」配下のDockerfileが読み込まれる
+    #   context: .
+    #   target: development
+
+    container_name: postgres
+
+    # posgresのデフォルトポートが5432
+    ports:
+      - 5432:5432
+
+    # [volume名]:[コンテナの絶対パス]
+    # volumes:
+    #   - ./tmp/db:/var/lib/postgresql/data
+
+    environment:
+      # タイムゾーン
+      - TZ=Asia/Tokyo
+      # POSTGRES_USER: "user"
+      # POSTGRES_PASSWORD: "postgres"
+
+    # 環境変数ファイル
+    env_file:
+      - .env
+
+    # depends_onはコンテナの起動順や停止順を制御する
+    # depends_on:
+    #   - web
+
+    # コンテナ起動時に実行するコマンド
+    # command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+
+    # stdin_openはコンテナとホストの標準入力をつなぐ設定
+    # trueを設定することでホストの入力がコンテナに送られるようになる
+    # stdin_open: true
+
+    # ttyはコンテナに疑似TTYを割り当てる設定
+    # tty: true
+# ボリューム設定では名前付きボリュームの定義に関する記述
+# driverにlocalを指定すると、PC上にデータが保存されます
+# volumes:
+#   db-store:
+#     driver: local
