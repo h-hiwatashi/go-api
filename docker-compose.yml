@@ -5,67 +5,38 @@ services:
   web:
     image: go-clean-arch
     container_name: go_api
-    build:
-      context: .
-      dockerfile: ./app/Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: ./app/Dockerfile
 
     # ホスト側のフォルダをマウントする
     volumes:
       - .:/app
-
     working_dir: /app
-
     tty: true
-
     depends_on:
-      - db
-
+      - mysql
     ports:
       - 9090:9090
 
-  db:
-    image: postgres:14.3
-
-    # build:
-    #  「.」配下のDockerfileが読み込まれる
-    #   context: .
-    #   target: development
-
-    container_name: postgres
-
-    # posgresのデフォルトポートが5432
-    ports:
-      - 5432:5432
-
-    # [volume名]:[コンテナの絶対パス]
+  mysql:
+    image: mysql:8.3
+    container_name: go_clean_arch_mysql
+    command: mysqld --user=root
     # volumes:
-    #   - ./tmp/db:/var/lib/postgresql/data
-
+    #   - ./article.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 3306:3306
     environment:
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_USER=$DATABASE_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
       # タイムゾーン
       - TZ=Asia/Tokyo
-      # POSTGRES_USER: "user"
-      # POSTGRES_PASSWORD: "postgres"
-
-    # 環境変数ファイル
-    env_file:
-      - .env
-
-    # depends_onはコンテナの起動順や停止順を制御する
-    # depends_on:
-    #   - web
-
-    # コンテナ起動時に実行するコマンド
-    # command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
-
-    # stdin_openはコンテナとホストの標準入力をつなぐ設定
-    # trueを設定することでホストの入力がコンテナに送られるようになる
-    # stdin_open: true
-
-    # ttyはコンテナに疑似TTYを割り当てる設定
-    # tty: true
-# ボリューム設定では名前付きボリュームの定義に関する記述
-# driverにlocalを指定すると、PC上にデータが保存されます
-# volumes:
-#   db-store:
-#     driver: local
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
