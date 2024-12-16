@@ -3,26 +3,25 @@
 FROM golang:1.19-bullseye as builder
 # アップデートとgitのインストール
 # goを扱うにはgitが必須であるがalpyneやDebianは軽量化のためgitが入っていない
-RUN apt update && apt upgrade && apt install -y git && \
-apt --update add git make bash build-base
+RUN apt update && apt install -y git
 
 WORKDIR /app
 
-COPY . .
+# COPY . .
 
-RUN make build
+# RUN make build
 
 # Distribution
-FROM alpine:latest
+# FROM alpine:latest
 
-RUN apt update && apt upgrade && apt install -y git && \
-apt --update --no-cache add tzdata && \
-    mkdir /app
+# RUN apt update && apt upgrade && apt install -y git && \
+# apt --update --no-cache add tzdata && \
+#     mkdir /app
 
-WORKDIR /app
+# WORKDIR /app
 
-EXPOSE 9090
+# EXPOSE 9090
 
-COPY --from=builder /app/engine /app/
+# COPY --from=builder /app/engine /app/
 
-CMD /app/engine
+# CMD /app/engine

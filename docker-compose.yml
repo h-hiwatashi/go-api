@@ -3,11 +3,11 @@ version: "3.9"
 # コンテナの設定
 services:
   web:
-    image: go-clean-arch
+    # image: go-clean-arch
     container_name: go_api
-    # build:
-    #   context: .
-    #   dockerfile: ./app/Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
 
     # ホスト側のフォルダをマウントする
     volumes:
@@ -17,25 +17,23 @@ services:
     depends_on:
       - mysql
     ports:
-      - 9090:9090
+      - "8080:8080"
 
   mysql:
     image: mysql:8.3
     container_name: go_clean_arch_mysql
     command: mysqld --user=root
-    # volumes:
-    #   - ./article.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 3306:3306
     environment:
-      - MYSQL_DATABASE=$MYSQL_DATABASE
-      - MYSQL_USER=$DATABASE_USER
-      - MYSQL_PASSWORD=$MYSQL_PASSWORD
-      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=go_clean_arch
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=root
       # タイムゾーン
       - TZ=Asia/Tokyo
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./mysql.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
