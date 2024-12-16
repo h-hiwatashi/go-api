@@ -16,6 +16,6 @@ updb:
 	docker compose up -d --build
 
 #docker-compose.ymlの更新を反映させる
-.PHONY: composeyml
-upd:
-	docker compose up -d
+# .PHONY: composeyml
+# upd:
+# 	docker compose up -d
