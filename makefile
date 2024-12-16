@@ -1,10 +1,10 @@
 .PHONY: intodb
 intodb:
-	docker container exec -it postgres bash
+	docker container exec -it go_api bash
 
 .PHONY: intogo
 intogo:
-	docker container exec -it todo_app-web-1 bash
+	docker container exec -it go_clean_arch_mysql bash
 
 .PHONY: upd
 upd:
@@ -18,4 +18,4 @@ updb:
 #docker-compose.ymlの更新を反映させる
 .PHONY: composeyml
 upd:
-	docker-compose up -d
+	docker compose up -d
