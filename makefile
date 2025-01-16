@@ -1,5 +1,4 @@
 .PHONY: intodb
-intodb:
 	docker container exec -it go_api bash
 
 .PHONY: intogo
