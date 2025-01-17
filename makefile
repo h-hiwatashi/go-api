@@ -1,8 +1,9 @@
-.PHONY: intodb
-	docker container exec -it go_api bash
-
 .PHONY: intogo
 intogo:
+	docker container exec -it go_api bash
+
+.PHONY: intodb
+intodb:
 	docker container exec -it go_clean_arch_mysql bash
 
 .PHONY: upd
@@ -10,7 +11,7 @@ upd:
 	docker compose up -d
 
 #Dockerfileの更新を反映させる
-.PHONY: dockerfile
+.PHONY: updb
 updb:
 	docker compose up -d --build
 
@@ -18,3 +19,8 @@ updb:
 # .PHONY: composeyml
 # upd:
 # 	docker compose up -d
+
+
+.PHONY: gofmt
+gofmt:
+	gofmt -l -s -w .
