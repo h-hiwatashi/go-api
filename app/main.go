@@ -1,10 +1,9 @@
 package main
 
 import (
-	"io"
 	"log"
 	"net/http"
-	"github.com/h-hiwatashi/go-api/handlers"
+	"github.com/h-hiwatashi/go-api/app/handlers"
 )
 
 func main() {
