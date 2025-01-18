@@ -24,3 +24,6 @@ updb:
 .PHONY: gofmt
 gofmt:
 	gofmt -l -s -w .
+
+
+# curl http://localhost:8080/hello -X POST -w '%{http_code}\n'
