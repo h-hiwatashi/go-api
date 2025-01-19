@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// モックデータ
 var (
 	Comment1 = Comment{
 		CommentID: 1,
