@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,8 +23,37 @@ func HelloHandler(w http.ResponseWriter, req *http.Request) {
 	// }
 	io.WriteString(w, "Hello, world!\n")
 }
+
+// POST /article のハンドラ
 func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
-	article := models.Article1
+	// 1. バイトスライス reqBodybuffer を何らかの形で用意
+	// req.Header の Get メソッドを呼ぶことで、リクエストヘッダの Content-Length フィールドの値を取得
+	length, err := strconv.Atoi(req.Header.Get("Content-Length"))
+	// int 型への変換に失敗した場合、400 番エラーを返却
+	if err != nil {
+		http.Error(w, "cannot get content length\n", http.StatusBadRequest)
+		return
+	}
+	reqBodybuffer := make([]byte, length)
+	// 2. Read メソッドでリクエストボディを読み出し
+	// 戻り値 err に、読み取り時に起きたエラーの内容が格納される
+	// errors.Is 関数は、第一引数として渡された err が第二引数 target として渡されたエラーと一致するかどうかを判定する関数
+	if _, err := req.Body.Read(reqBodybuffer); !errors.Is(err, io.EOF) {
+		// Read メソッドからの err が io.EOF 以外だった場合、500 番エラーを返却
+		http.Error(w, "fail to get request body\n", http.StatusBadRequest)
+		return
+	}
+	// 3. ボディを Close する
+	defer req.Body.Close()
+
+	//Article 型の変数 reqArticle の中に、 reqBodybuffer に格納された json バイト列をデコードした結果を格納
+	var reqArticle models.Article
+	if err := json.Unmarshal(reqBodybuffer, &reqArticle); err != nil {
+		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
+		return
+	}
+
+	article := reqArticle
 	jsonData, err := json.Marshal(article)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
