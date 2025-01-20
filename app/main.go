@@ -15,7 +15,7 @@ func main() {
 	r.HandleFunc("/article/list", handlers.ArticleListHandler).Methods(http.MethodGet)
 	r.HandleFunc("/article/{id:[0-9]+}", handlers.ArticleDetailHandler).Methods(http.MethodGet)
 	r.HandleFunc("/article/nice", handlers.PostNiceHandler).Methods(http.MethodPost)
-	r.HandleFunc("/comment", handlers.PostCommentHandler).Methods(http.MethodGet)
+	r.HandleFunc("/comment", handlers.PostCommentHandler).Methods(http.MethodPost)
 
 	/// 標準パッケージ net/http だけで実装
 	// http.HandleFunc("/hello", handlers.HelloHandler)

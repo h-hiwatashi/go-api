@@ -21,21 +21,42 @@ services:
 
   mysql:
     image: mysql:8.3
-    container_name: go_clean_arch_mysql
-    command: mysqld --user=root
+    container_name: go_api_mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --sql-mode=ONLY_FULL_GROUP_BY,NO_ENGINE_SUBSTITUTION
     ports:
       - 3306:3306
     environment:
-      - MYSQL_DATABASE=go_clean_arch
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-      - MYSQL_ROOT_PASSWORD=root
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_DATABASE_USER}
+      MYSQL_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
       # タイムゾーン
-      - TZ=Asia/Tokyo
+      TZ: "Asia/Tokyo"
     # ホスト側のフォルダをマウントする
     volumes:
-      - ./mysql.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./createTable.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD"
       timeout: 5s
       retries: 10
+
+  # TODO: tbls導入
+  # tbls:
+  #   image: ghcr.io/k1low/tbls
+  #   working_dir: /db
+  #   volumes: 
+  #   - ./db/:/db
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #   env_file:
+  #     - .env
+  #   entrypoint: tbls doc --rm-dist mysql://${MYSQL_ROOT_USER}:${MYSQL_ROOT_PASSWORD}@${MYSQL_HOST}:${MYSQL_DATABASE_PORT}/${MYSQL_DATABASE}
+      
+# ボリュームの作成
+volumes:
+  db-volume:

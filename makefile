@@ -4,7 +4,7 @@ intogo:
 
 .PHONY: intodb
 intodb:
-	docker container exec -it go_clean_arch_mysql bash
+	docker container exec -it go_api_mysql bash
 
 .PHONY: upd
 upd:
