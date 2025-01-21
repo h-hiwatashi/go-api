@@ -21,7 +21,7 @@ services:
 
   mysql:
     image: mysql:8.3
-    container_name: go_api_mysql
+    container_name: ${MYSQL_DATABASE}
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -48,7 +48,7 @@ services:
   # tbls:
   #   image: ghcr.io/k1low/tbls
   #   working_dir: /db
-  #   volumes: 
+  #   volumes:
   #   - ./db/:/db
   #   depends_on:
   #     mysql:
@@ -56,7 +56,7 @@ services:
   #   env_file:
   #     - .env
   #   entrypoint: tbls doc --rm-dist mysql://${MYSQL_ROOT_USER}:${MYSQL_ROOT_PASSWORD}@${MYSQL_HOST}:${MYSQL_DATABASE_PORT}/${MYSQL_DATABASE}
-      
+
 # ボリュームの作成
 volumes:
   db-volume:
