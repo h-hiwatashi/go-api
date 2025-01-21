@@ -18,3 +18,25 @@ http.Request.Body の中からリクエストボディの内容を読み出す�
 1. 何らかの方法でバイトスライスを用意
 2. Body の Read メソッドを呼び出して、1 で用意したバイトスライスに内容を書き込む
 3. 使い終わった Body を Close メソッドで閉じる
+
+## encoding/json でメモリを扱う
+
+### json.Marshal・json.Unmarshal 関数
+
+引数・戻り値に []byte を含んでいることから、これらはそれぞれ「json エンコードの内容をメモリに格納する」「メモリの中身を json デコードする」という関数
+
+## encoding/json でストリームを扱う
+
+### json.Decoder 型
+
+encoding/json パッケージの中にある json.Decoder 型 29 は、ストリームから取得できるデータ
+を json デコードする
+
+### json.Encoder 型
+
+encoding/json パッケージの中にある json.Encoder 型 30 は、json デコードの結果をストリーム
+に流す
+
+# aql ファイルを流すコマンド
+
+mysql -h 127.0.0.1 -u user go_api_mysql -p < insertData.sql
