@@ -87,7 +87,7 @@ func PostNiceHandler(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(reqArticle)
 }
 
-// POST /comment 
+// POST /comment
 func PostCommentHandler(w http.ResponseWriter, req *http.Request) {
 	var reqComment models.Comment
 	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
