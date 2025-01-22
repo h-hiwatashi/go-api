@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/h-hiwatashi/go-api/app/models"
+	"github.com/h-hiwatashi/go-api/app/repositories"
 )
 
 // 他のパッケージからも参照可能な関数・変数・定数を作成するためには、その名前を大文字から始める必要があります
@@ -32,7 +33,11 @@ func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
 
+
+	repositories.InsertArticle(reqArticle)
+
 	json.NewEncoder(w).Encode(reqArticle)
+	
 }
 
 // GET /article/list

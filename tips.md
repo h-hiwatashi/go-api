@@ -40,3 +40,28 @@ encoding/json パッケージの中にある json.Encoder 型 30 は、json デ�
 # aql ファイルを流すコマンド
 
 mysql -h 127.0.0.1 -u user go_api_mysql -p < insertData.sql
+
+
+# SQLドライバー
+## mySQL
+db.Query メソッドの第二引数以降に、?に代入したい値を指定
+## PostgresSQL
+$1,$2
+
+# memo
+• POST /article: リクエストボディで受け取った記事を投稿する
+– 構造体 models.Article を受け取って、それをデータベースに挿入する処理が必要
+• GET /article/list: クエリパラメータ page で指定されたページ (1 ページに 5 個の記事
+を表示) に表示するための記事一覧を取得する
+– 指定された記事データをデータベースから取得して、それを models.Article 構造体
+のスライス []models.Article に詰めて返す処理が必要
+• GET /article/{id}: 指定 ID の記事を取得する
+– 指定 ID の記事データをデータベースから取得して、それを models.Article 構造体の
+形で返す処理が必要
+– 指 定 ID の 記 事 に つ い た コ メ ン ト 一 覧 を デ ー タ ベ ー ス か ら 取 得 し て、 そ れ を
+models.Comment 構造体のスライス []models.Comment に詰めて返す処理が必要
+• POST /article/nice: 記事にいいねをつける
+– 指定された ID の記事のいいね数を+1 するようにデータベースの中身を更新する処理
+が必要
+• POST /comment: リクエストボディで受け取ったコメントを投稿する
+– 構造体 models.Comment を受け取って、それをデータベースに挿入する処理が必要

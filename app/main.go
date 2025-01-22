@@ -33,6 +33,7 @@ func main() {
 	// サーバー起動時のログを出力
 	log.Println("server start at port 8080")
 
+	// DBの接続
 	dbUser := "user"
 	dbPassword := "user"
 	dbDatabase := "go_api_mysql"
@@ -43,34 +44,38 @@ func main() {
 		fmt.Println(err)
 	}
 	defer db.Close()
-	const sqlStr = `select * from articles;`
 
-	rows, err := db.Query(sqlStr)
+	// SQL実行
+	articleID := 1
+	const sqlStr = `
+	select * 
+	from articles
+	where article_id = ?
+	;`
+	row := db.QueryRow(sqlStr, articleID)
+	if err := row.Err(); err != nil {
+		// データ取得件数が 0 件だった場合は
+		// データ読み出し処理には移らずに終了
+		fmt.Println(err)
+		return
+	}
+
+	// データの格納
+	// articleArray := make([]models.Article, 0)
+	var article models.Article
+	var createdTime sql.NullTime
+	// 引数に「データ読み出し結果を格納したい変数のポインタ」を指定することで、rows の中に格納されている取得レコード内容を読み出す
+	err = row.Scan(&article.ID, &article.Title, &article.Contents, &article.UserName, &article.NiceNum, &createdTime)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer rows.Close()
-
-	articleArray := make([]models.Article, 0)
-	for rows.Next() {
-		var article models.Article
-		var createdTime sql.NullTime
-
-		// 引数に「データ読み出し結果を格納したい変数のポインタ」を指定することで、rows の中に格納されている取得レコード内容を読み出す
-		err := rows.Scan(&article.ID, &article.Title, &article.Contents, &article.UserName, &article.NiceNum, &createdTime)
-		// Validフィールドがtrueだった場合は非NULLであることを示し、Timeフィールドにはデータが格納されている
-		if createdTime.Valid {
-			article.CreatedAt = createdTime.Time
-		}
-
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			articleArray = append(articleArray, article)
-		}
+	if createdTime.Valid {
+		article.CreatedAt = createdTime.Time
 	}
 	fmt.Printf("%+v\n", articleArray)
+
+
 
 	// ListenAndServe 関数にて、サーバーを起動
 	// log.Fatal(http.ListenAndServe(":8080", nil))
