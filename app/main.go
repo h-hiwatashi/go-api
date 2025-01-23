@@ -48,7 +48,7 @@ func main() {
 	// SQL実行
 	articleID := 1
 	const sqlStr = `
-	select * 
+	select *
 	from articles
 	where article_id = ?
 	;`
@@ -61,7 +61,7 @@ func main() {
 	}
 
 	// データの格納
-	// articleArray := make([]models.Article, 0)
+	articleArray := make([]models.Article, 0)
 	var article models.Article
 	var createdTime sql.NullTime
 	// 引数に「データ読み出し結果を格納したい変数のポインタ」を指定することで、rows の中に格納されている取得レコード内容を読み出す
@@ -74,8 +74,6 @@ func main() {
 		article.CreatedAt = createdTime.Time
 	}
 	fmt.Printf("%+v\n", articleArray)
-
-
 
 	// ListenAndServe 関数にて、サーバーを起動
 	// log.Fatal(http.ListenAndServe(":8080", nil))
