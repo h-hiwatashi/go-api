@@ -70,3 +70,41 @@ func SelectArticleDetail(db *sql.DB, articleID int) (models.Article, error) {
 	}
 	return article, nil
 }
+
+// いいねの数を update する関数
+// -> 発生したエラーを返り値にする
+func UpdateNiceNum(db *sql.DB, articleID int) error {
+	const sqlGetNice = `
+	select nice
+	from articles
+	where article_id = ?;
+	`
+	const sqlUpdateNice = `update articles set nice = ? where article_id = ?`
+
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	row := tx.QueryRow(sqlGetNice, articleID)
+	if err := row.Err(); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	var nicenum int
+	err = row.Scan(&nicenum)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	_, err = tx.Exec(sqlUpdateNice, nicenum+1, articleID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+	return nil
+}

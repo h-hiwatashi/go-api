@@ -33,11 +33,10 @@ func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
 
-
 	repositories.InsertArticle(reqArticle)
 
 	json.NewEncoder(w).Encode(reqArticle)
-	
+
 }
 
 // GET /article/list
