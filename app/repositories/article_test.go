@@ -1,8 +1,6 @@
 package repositories_test
 
 import (
-	"database/sql"
-	"fmt"
 	"testing"
 
 	"github.com/h-hiwatashi/go-api/app/models"
@@ -11,19 +9,21 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func TestSelectArticleDetail(t *testing.T) {
-	// DBの接続
-	dbUser := "user"
-	dbPassword := "user"
-	dbDatabase := "go_api_mysql"
-	dbConn := fmt.Sprintf("%s:%s@tcp(go_api_mysql:3306)/%s?parseTime=true", dbUser,
-		dbPassword, dbDatabase)
-	db, err := sql.Open("mysql", dbConn)
+func TestSelectArticleList(t *testing.T) {
+	// テストデータの投入
+	expectedNum := 2
+	got, err := repositories.SelectArticleList(testDB, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer db.Close()
+	// テストデータの数が期待通りか確認
+	if num := len(got); num != expectedNum {
+		t.Errorf("got %d but want %d\n", num, expectedNum)
+	}
+}
 
+// SelectArticleDetail関数のテスト
+func TestSelectArticleDetail(t *testing.T) {
 	tests := []struct {
 		testTitle string
 		expected  models.Article
@@ -31,7 +31,7 @@ func TestSelectArticleDetail(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.testTitle, func(t *testing.T) {
-			got, err := repositories.SelectArticleDetail(db, test.expected.ID)
+			got, err := repositories.SelectArticleDetail(testDB, test.expected.ID)
 			if err != nil {
 				t.Fatal(err)
 			}
