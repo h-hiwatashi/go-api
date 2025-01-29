@@ -16,7 +16,7 @@ func setup() error {
 	dbUser := "user"
 	dbPassword := "user"
 	dbDatabase := "go_api_mysql"
-	dbConn := fmt.Sprintf("%s:%s@tcp(go_api_mysql:3306)/%s?parseTime=true", dbUser,
+	dbConn := fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s?parseTime=true", dbUser,
 		dbPassword, dbDatabase)
 	var err error
 	testDB, err = sql.Open("mysql", dbConn)
@@ -35,6 +35,9 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		os.Exit(1)
 	}
+
+	// m.Run()とはテストパッケージ内にある全てのテストを実行する関数
 	m.Run()
+
 	teardown()
 }

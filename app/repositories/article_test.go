@@ -27,7 +27,27 @@ func TestSelectArticleDetail(t *testing.T) {
 	tests := []struct {
 		testTitle string
 		expected  models.Article
-	}{{testTitle: "subtest1", expected: models.Article{ID: 1, Title: "firstPost", Contents: "This is my first blog", UserName: "saki", NiceNum: 2}}, {testTitle: "subtest2", expected: models.Article{ID: 2, Title: "2nd", Contents: "Second blog post", UserName: "saki", NiceNum: 4}}}
+	}{
+		{
+			testTitle: "subtest1",
+			expected: models.Article{
+				ID:       1,
+				Title:    "firstPost",
+				Contents: "This is my first blog",
+				UserName: "user name",
+				NiceNum:  2,
+			},
+		}, {
+			testTitle: "subtest2",
+			expected: models.Article{
+				ID:       2,
+				Title:    "2nd",
+				Contents: "Second blog post",
+				UserName: "user name",
+				NiceNum:  4,
+			},
+		},
+	}
 
 	for _, test := range tests {
 		t.Run(test.testTitle, func(t *testing.T) {
