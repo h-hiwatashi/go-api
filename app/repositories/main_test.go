@@ -30,7 +30,7 @@ func teardown() {
 	testDB.Close()
 }
 
-func testMain(m *testing.M) {
+func TestMain(m *testing.M) {
 	err := setup()
 	if err != nil {
 		os.Exit(1)
