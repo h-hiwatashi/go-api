@@ -11,7 +11,7 @@ import (
 
 func TestSelectArticleList(t *testing.T) {
 	// テストデータの投入
-	expectedNum := 2
+	expectedNum := 4
 	got, err := repositories.SelectArticleList(testDB, 1)
 	if err != nil {
 		t.Fatal(err)

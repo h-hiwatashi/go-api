@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/h-hiwatashi/go-api/app/models"
 )
@@ -35,7 +34,7 @@ func SelectArticleList(db *sql.DB, page int) ([]models.Article, error) {
 	from articles
 	limit ? offset ?;
 	`
-	offsetNum := page * 5
+	offsetNum := (page - 1) * 5
 
 	rows, err := db.Query(sqlStr, 5, offsetNum)
 	if err != nil {
@@ -45,9 +44,9 @@ func SelectArticleList(db *sql.DB, page int) ([]models.Article, error) {
 
 	for rows.Next() {
 		var article models.Article
-		err := rows.Scan(&article.Title, &article.Contents, &article.UserName, &article.NiceNum)
+		err := rows.Scan(&article.ID, &article.Title, &article.Contents, &article.UserName, &article.NiceNum)
 		if err != nil {
-			fmt.Println(err)
+			return nil, err
 		} else {
 			articleArray = append(articleArray, article)
 		}
