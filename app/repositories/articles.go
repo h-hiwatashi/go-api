@@ -13,6 +13,7 @@ func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 	insert into articles (title, contents, username, nice, created_at) values
 	(?, ?, ?, 0, now());
 	`
+
 	var newArticle models.Article
 	newArticle.Title, newArticle.Contents, newArticle.UserName = article.Title, article.Contents, article.UserName
 
@@ -20,6 +21,7 @@ func InsertArticle(db *sql.DB, article models.Article) (models.Article, error) {
 	if err != nil {
 		return models.Article{}, err
 	}
+
 	id, _ := result.LastInsertId()
 
 	newArticle.ID = int(id)

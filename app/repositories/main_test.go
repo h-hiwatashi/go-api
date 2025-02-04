@@ -16,8 +16,12 @@ func setup() error {
 	dbUser := "user"
 	dbPassword := "user"
 	dbDatabase := "go_api_mysql"
-	dbConn := fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s?parseTime=true", dbUser,
-		dbPassword, dbDatabase)
+	dbConn := fmt.Sprintf(
+		"%s:%s@tcp(localhost:3306)/%s?parseTime=true",
+		dbUser,
+		dbPassword,
+		dbDatabase,
+	)
 	var err error
 	testDB, err = sql.Open("mysql", dbConn)
 	if err != nil {
