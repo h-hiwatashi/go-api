@@ -105,50 +105,22 @@ func TestInsertArticle(t *testing.T) {
 
 func TestUpdateNiceNum(t *testing.T) {
 	articleID := 1
-	expectedNiceNum := 3
-	err := repositories.UpdateNiceNum(testDB, articleID)
+	before, err := repositories.SelectArticleDetail(testDB, articleID)
+	if err != nil {
+		t.Fatal("fail to get before data")
+	}
+
+	err = repositories.UpdateNiceNum(testDB, articleID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	article, err := repositories.SelectArticleDetail(testDB, articleID)
+
+	after, err := repositories.SelectArticleDetail(testDB, articleID)
 	if err != nil {
-		t.Fatal(err)
-	}
-	if article.NiceNum != expectedNiceNum {
-		t.Errorf("NiceNum: get %d but want %d\n", article.NiceNum, expectedNiceNum)
+		t.Fatal("fail to get after data")
 	}
 
-	t.Cleanup(func() {
-		const sqlGetNice = `
-		select nice
-		from articles
-		where article_id = ?;
-		`
-		const sqlUpdateNice = `update articles set nice = ? where article_id = ?`
-		tx, err := testDB.Begin()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		row := tx.QueryRow(sqlGetNice, articleID)
-		if err := row.Err(); err != nil {
-			tx.Rollback()
-			t.Fatal(err)
-		}
-
-		var nicenum int
-		err = row.Scan(&nicenum)
-		if err != nil {
-			tx.Rollback()
-			t.Fatal(err)
-		}
-
-		_, err = tx.Exec(sqlUpdateNice, nicenum-1, articleID)
-		if err != nil {
-			tx.Rollback()
-			t.Fatal(err)
-		}
-
-		tx.Commit()
-	})
+	if after.NiceNum-before.NiceNum != 1 {
+		t.Error("fail to update nice num")
+	}
 }
