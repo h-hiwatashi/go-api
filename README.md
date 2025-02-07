@@ -14,6 +14,11 @@
 
 ## ディレクトリ構成
 
-ハンドラ層
-サービス層
-レポジトリ層
+- ハンドラ層
+  app/handlers
+- サービス層
+  app/services
+- レポジトリ層
+  app/repositories
+- モデル
+  app/models
