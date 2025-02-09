@@ -7,6 +7,12 @@ import (
 
 // 指定IDの記事をDBから取得する関数
 func GetArticleService(articleID int) (models.Article, error) {
+	db, err := connectDB()
+	if err != nil {
+		return models.Article{}, err
+	}
+	defer db.Close()
+
 	article, err := repositories.SelectArticleDetail(db, articleID)
 	if err != nil {
 		return models.Article{}, err
