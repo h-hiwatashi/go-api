@@ -8,11 +8,15 @@ import (
 )
 
 var (
-	dbUser     = "docker"
-	dbPassword = "docker"
-	dbDatabase = "sampledb"
-	dbConn     = fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?parseTime=true", dbUser,
-		dbPassword, dbDatabase)
+	dbUser     = "user"
+	dbPassword = "user"
+	dbDatabase = "go_api_mysql"
+	dbConn     = fmt.Sprintf(
+		"%s:%s@tcp(localhost:3306)/%s?parseTime=true",
+		dbUser,
+		dbPassword,
+		dbDatabase,
+	)
 )
 
 func connectDB() (*sql.DB, error) {
