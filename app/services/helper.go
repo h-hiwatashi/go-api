@@ -3,14 +3,15 @@ package services
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
-	dbUser     = "user"
-	dbPassword = "user"
-	dbDatabase = "go_api_mysql"
+	dbUser     = os.Getenv("MYSQL_DATABASE_USER")
+	dbPassword = os.Getenv("MYSQL_DATABASE_PASSWORD")
+	dbDatabase = os.Getenv("MYSQL_DATABASE")
 	dbConn     = fmt.Sprintf(
 		"%s:%s@tcp(localhost:3306)/%s?parseTime=true",
 		dbUser,
