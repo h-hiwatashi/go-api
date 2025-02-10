@@ -27,12 +27,12 @@
 
 サービス層に必要な機能をまとめ
 
-- ArticleDetailHandler 内: 指定 ID の記事をデータベースから取得する
-- PostArticleHandler 内: 記事データをデータベース内に挿入し、その値を返す
-- ArticleListHandler 内: クエリパラメータで指定されたページの記事一覧をデータベース
+- ArticleDetailHandler: 指定 ID の記事をデータベースから取得する
+- PostArticleHandler: 記事データをデータベース内に挿入し、その値を返す
+- ArticleListHandler: クエリパラメータで指定されたページの記事一覧をデータベース
   から取得する
-- PostNiceHandler 内: 指定記事にいいねを+1 する更新作業をデータベースに保存し、その
+- PostNiceHandler: 指定記事にいいねを+1 する更新作業をデータベースに保存し、その
   結果を返す
-- PostCommentHandler 内: コメントデータをデータベース内に挿入し、その値を返す
+- PostCommentHandler: コメントデータをデータベース内に挿入し、その値を返す
 
 ## テスト
