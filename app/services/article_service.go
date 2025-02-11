@@ -72,12 +72,14 @@ func PostNiceService(article models.Article) (models.Article, error) {
 	}
 	defer db.Close()
 
-	return models.Article{}, nil
+	articleID := article.ID
+	err = repositories.UpdateNiceNum(db, articleID)
+	if err != nil {
+		return models.Article{}, err
+	}
+	newArticle, err := repositories.SelectArticleDetail(db, articleID)
+	if err != nil {
+		return models.Article{}, err
+	}
+	return newArticle, nil
 }
-
-// PostCommentHandler で使用することを想定したサービス
-// 引数の情報をもとに新しいコメントを作り、結果を返却
-// func PostCommentService(comment models.Comment) (models.Comment, error) {
-
-// 	return models.Comment{}, nil
-// }
