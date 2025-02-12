@@ -3,14 +3,16 @@ package handlers
 import (
 	"encoding/json"
 	// "errors"
-	"fmt"
+
 	"io"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/h-hiwatashi/go-api/app/models"
+
 	// "github.com/h-hiwatashi/go-api/app/repositories"
+	"github.com/h-hiwatashi/go-api/app/services"
 )
 
 // 他のパッケージからも参照可能な関数・変数・定数を作成するためには、その名前を大文字から始める必要があります
@@ -18,8 +20,8 @@ func HelloHandler(w http.ResponseWriter, req *http.Request) {
 	// if req.Method == http.MethodGet {
 	// 	io.WriteString(w, "Hello, world!\n")
 	// } else {
-	// 	// もし、req の中の Method フィールドが GET でなかったら
-	// 	// Invalid method というレスポンスを、405 番のステータスコードと共に返す
+	// もし、req の中の Method フィールドが GET でなかったら
+	// Invalid method というレスポンスを、405 番のステータスコードと共に返す
 	// 	http.Error(w, "Invalid method", http.StatusMethodNotAllowed)
 	// }
 	io.WriteString(w, "Hello, world!\n")
@@ -75,10 +77,12 @@ func ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
-	resString := fmt.Sprintf("Article No.%d\n", articleID)
-	io.WriteString(w, resString)
 
-	article := models.Article1
+	article, err := services.GetArticleService(articleID)
+	if err != nil {
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
+	}
 	json.NewEncoder(w).Encode(article)
 }
 
