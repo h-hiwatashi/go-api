@@ -27,20 +27,6 @@ func HelloHandler(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "Hello, world!\n")
 }
 
-// POST /article のハンドラ
-func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
-	//Article 型の変数 reqArticle の中に、 reqBodybuffer に格納された json バイト列をデコードした結果を格納
-	var reqArticle models.Article
-	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
-		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
-	}
-
-	// repositories.InsertArticle(reqArticle)
-
-	json.NewEncoder(w).Encode(reqArticle)
-
-}
-
 // GET /article/list
 // • x が数字だった場合は、記事一覧ページの x ページ目に表示されるデータを返す
 // • page に対応する値が複数個送られてきた場合には、最初の値を使用する
@@ -67,7 +53,25 @@ func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(articleList)
 }
 
+// POST /article のハンドラ
+func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
+	//Article 型の変数 reqArticle の中に、 reqBodybuffer に格納された json バイト列をデコードした結果を格納
+	var reqArticle models.Article
+	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
+		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
+	}
+
+	article, err := services.PostArticleService(reqArticle)
+	if err != nil {
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(article)
+}
+
 // GET /article/:id
+
 func ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 	// articleID という変数に、リクエストの URL から取得した id パラメータを格納
 	// strconv.Atoi で文字列を数値に変換
