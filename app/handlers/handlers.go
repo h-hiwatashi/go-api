@@ -33,23 +33,26 @@ func HelloHandler(w http.ResponseWriter, req *http.Request) {
 // • x が数字ではなかった場合には、リクエストについていたパラメータの値が悪いということなので 400 番エラーを返す
 // • クエリパラメータが URL についていなかった場合には、パラメータ page=1 がついていたときと同じ処理をする
 func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
-	// queryMap := req.URL.Query()
-	// var page int
-	// /// もし map 型の変数 queryMap が文字列"page"をキーに持っているのであれば、p には pageキーに対応する値 queryMap["page"] が、ok には true が格納される
-	// /// もし map 型の変数 queryMap が文字列"page"をキーに持っていないのであれば、ok にはfalse が格納される
-	// if p, ok := queryMap["page"]; ok && len(p) > 0 {
-	// 	var err error
-	// 	page, err = strconv.Atoi(p[0])
-	// 	if err != nil {
-	// 		http.Error(w, "Invalid page", http.StatusBadRequest)
-	// 		return
-	// 	}
-	// } else {
-	// 	page = 1
-	// }
-	// reqString := fmt.Sprintf("Article List (page: %d)\n", page)
+	queryMap := req.URL.Query()
+	var page int
+	/// もし map 型の変数 queryMap が文字列"page"をキーに持っているのであれば、p には pageキーに対応する値 queryMap["page"] が、ok には true が格納される
+	/// もし map 型の変数 queryMap が文字列"page"をキーに持っていないのであれば、ok にはfalse が格納される
+	if p, ok := queryMap["page"]; ok && len(p) > 0 {
+		var err error
+		page, err = strconv.Atoi(p[0])
+		if err != nil {
+			http.Error(w, "Invalid page", http.StatusBadRequest)
+			return
+		}
+	} else {
+		page = 1
+	}
 
-	articleList := []models.Article{models.Article1, models.Article2}
+	articleList, err := services.GetArticleListService(page)
+	if err != nil {
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
+	}
 	json.NewEncoder(w).Encode(articleList)
 }
 
@@ -71,7 +74,6 @@ func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 // GET /article/:id
-
 func ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 	// articleID という変数に、リクエストの URL から取得した id パラメータを格納
 	// strconv.Atoi で文字列を数値に変換
