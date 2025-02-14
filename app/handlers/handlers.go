@@ -98,7 +98,13 @@ func PostNiceHandler(w http.ResponseWriter, req *http.Request) {
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
-	json.NewEncoder(w).Encode(reqArticle)
+
+	article, err := services.PostNiceService(reqArticle)
+	if err != nil {
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(article)
 }
 
 // POST /comment
