@@ -1,6 +1,8 @@
 package services
 
 import (
+	"log"
+
 	"github.com/h-hiwatashi/go-api/app/models"
 	"github.com/h-hiwatashi/go-api/app/repositories"
 )
@@ -51,12 +53,14 @@ func PostArticleService(article models.Article) (models.Article, error) {
 func GetArticleListService(page int) ([]models.Article, error) {
 	db, err := connectDB()
 	if err != nil {
+		log.Printf("Error connecting to database: %v\n", err)
 		return nil, err
 	}
 	defer db.Close()
 
 	articleList, err := repositories.SelectArticleList(db, page)
 	if err != nil {
+		log.Printf("Error selecting article list: %v\n", err)
 		return nil, err
 	}
 

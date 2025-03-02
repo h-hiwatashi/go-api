@@ -34,6 +34,8 @@ func HelloHandler(w http.ResponseWriter, req *http.Request) {
 // • クエリパラメータが URL についていなかった場合には、パラメータ page=1 がついていたときと同じ処理をする
 func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
 	queryMap := req.URL.Query()
+
+	// クエリパラメータpageを取得
 	var page int
 	/// もし map 型の変数 queryMap が文字列"page"をキーに持っているのであれば、p には pageキーに対応する値 queryMap["page"] が、ok には true が格納される
 	/// もし map 型の変数 queryMap が文字列"page"をキーに持っていないのであれば、ok にはfalse が格納される
@@ -41,7 +43,7 @@ func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
 		var err error
 		page, err = strconv.Atoi(p[0])
 		if err != nil {
-			http.Error(w, "Invalid page", http.StatusBadRequest)
+			http.Error(w, "Invalid query parameter", http.StatusBadRequest)
 			return
 		}
 	} else {
@@ -53,6 +55,7 @@ func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
 		return
 	}
+
 	json.NewEncoder(w).Encode(articleList)
 }
 
