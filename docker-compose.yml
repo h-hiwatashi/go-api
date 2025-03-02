@@ -18,6 +18,13 @@ services:
       - mysql
     ports:
       - "8080:8080"
+    # NOTE: .envだけではgoの環境変数が読み込まれなかったため明示的に記載。
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE_USER: ${MYSQL_DATABASE_USER}
+      MYSQL_DATABASE_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
 
   mysql:
     image: mysql:8.3
