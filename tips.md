@@ -69,3 +69,8 @@ models.Comment 構造体のスライス []models.Comment に詰めて返す処�
 が必要
 • POST /comment: リクエストボディで受け取ったコメントを投稿する
 – 構造体 models.Comment を受け取って、それをデータベースに挿入する処理が必要
+
+# sql.DB 型の　 Open/Close
+
+sql.DB 型の頻繁な Open/Close は Go 公式としての非推奨事項
+https://pkg.go.dev/database/sql#DB
