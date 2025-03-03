@@ -33,14 +33,8 @@ func GetArticleService(articleID int) (models.Article, error) {
 
 // PostArticleHandler で使うことを想定したサービス
 // 引数の情報をもとに新しい記事を作り、結果を返却
-func PostArticleService(article models.Article) (models.Article, error) {
-	db, err := connectDB()
-	if err != nil {
-		return models.Article{}, err
-	}
-	defer db.Close()
-
-	newArticle, err := repositories.InsertArticle(db, article)
+func (s *MyAppService) PostArticleService(article models.Article) (models.Article, error) {
+	newArticle, err := repositories.InsertArticle(s.db, article)
 	if err != nil {
 		return models.Article{}, err
 	}
