@@ -1,4 +1,4 @@
-package handlers
+package controllers
 
 import (
 	"encoding/json"
@@ -14,6 +14,17 @@ import (
 	// "github.com/h-hiwatashi/go-api/app/repositories"
 	"github.com/h-hiwatashi/go-api/app/services"
 )
+
+// 1. コントローラ構造体を定義
+type MyAppController struct {
+	// 2. フィールドに MyAppService 構造体を含める
+	service *services.MyAppService
+}
+
+// コンストラクタの定義
+func NewMyAppController(s *services.MyAppService) *MyAppController {
+	return &MyAppController{service: s}
+}
 
 // 他のパッケージからも参照可能な関数・変数・定数を作成するためには、その名前を大文字から始める必要があります
 func HelloHandler(w http.ResponseWriter, req *http.Request) {
@@ -60,14 +71,14 @@ func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 // POST /article のハンドラ
-func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
+func (c *MyAppController) PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 	//Article 型の変数 reqArticle の中に、 reqBodybuffer に格納された json バイト列をデコードした結果を格納
 	var reqArticle models.Article
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
 
-	article, err := services.PostArticleService(reqArticle)
+	article, err := c.service.PostArticleService(reqArticle)
 	if err != nil {
 		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
 		return
