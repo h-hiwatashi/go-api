@@ -8,21 +8,15 @@ import (
 )
 
 // 指定IDの記事をDBから取得する関数
-func GetArticleService(articleID int) (models.Article, error) {
-	db, err := connectDB()
-	if err != nil {
-		return models.Article{}, err
-	}
-	defer db.Close()
-
-	article, err := repositories.SelectArticleDetail(db, articleID)
+func (s *MyAppService) GetArticleService(articleID int) (models.Article, error) {
+	article, err := repositories.SelectArticleDetail(s.db, articleID)
 	if err != nil {
 		return models.Article{}, err
 	}
 
 	// SelectArticleDetail 関数では「指定 ID 記事に紐づいたコメント一覧」までは取得できないため、
 	// SelectCommentList 関数を実行する
-	commentList, err := repositories.SelectCommentList(db, articleID)
+	commentList, err := repositories.SelectCommentList(s.db, articleID)
 	if err != nil {
 		return models.Article{}, err
 	}
@@ -44,15 +38,8 @@ func (s *MyAppService) PostArticleService(article models.Article) (models.Articl
 
 // ArticleListHandler で使うことを想定したサービス
 // 指定 page の記事一覧を返却
-func GetArticleListService(page int) ([]models.Article, error) {
-	db, err := connectDB()
-	if err != nil {
-		log.Printf("Error connecting to database: %v\n", err)
-		return nil, err
-	}
-	defer db.Close()
-
-	articleList, err := repositories.SelectArticleList(db, page)
+func (s *MyAppService) GetArticleListService(page int) ([]models.Article, error) {
+	articleList, err := repositories.SelectArticleList(s.db, page)
 	if err != nil {
 		log.Printf("Error selecting article list: %v\n", err)
 		return nil, err
@@ -63,19 +50,13 @@ func GetArticleListService(page int) ([]models.Article, error) {
 
 // PostNiceHandler で使うことを想定したサービス
 // 指定 ID の記事のいいね数を+1 して、結果を返却
-func PostNiceService(article models.Article) (models.Article, error) {
-	db, err := connectDB()
-	if err != nil {
-		return models.Article{}, err
-	}
-	defer db.Close()
-
+func (s *MyAppService) PostNiceService(article models.Article) (models.Article, error) {
 	articleID := article.ID
-	err = repositories.UpdateNiceNum(db, articleID)
+	err := repositories.UpdateNiceNum(s.db, articleID)
 	if err != nil {
 		return models.Article{}, err
 	}
-	newArticle, err := repositories.SelectArticleDetail(db, articleID)
+	newArticle, err := repositories.SelectArticleDetail(s.db, articleID)
 	if err != nil {
 		return models.Article{}, err
 	}
