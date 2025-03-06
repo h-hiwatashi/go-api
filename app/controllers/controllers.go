@@ -43,7 +43,7 @@ func HelloHandler(w http.ResponseWriter, req *http.Request) {
 // • page に対応する値が複数個送られてきた場合には、最初の値を使用する
 // • x が数字ではなかった場合には、リクエストについていたパラメータの値が悪いということなので 400 番エラーを返す
 // • クエリパラメータが URL についていなかった場合には、パラメータ page=1 がついていたときと同じ処理をする
-func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
+func (c *MyAppController) ArticleListHandler(w http.ResponseWriter, req *http.Request) {
 	queryMap := req.URL.Query()
 
 	// クエリパラメータpageを取得
@@ -61,7 +61,7 @@ func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
 		page = 1
 	}
 
-	articleList, err := services.GetArticleListService(page)
+	articleList, err := c.service.GetArticleListService(page)
 	if err != nil {
 		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
 		return
@@ -88,7 +88,7 @@ func (c *MyAppController) PostArticleHandler(w http.ResponseWriter, req *http.Re
 }
 
 // GET /article/:id
-func ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
+func (c *MyAppController) ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 	// articleID という変数に、リクエストの URL から取得した id パラメータを格納
 	// strconv.Atoi で文字列を数値に変換
 	articleID, err := strconv.Atoi(mux.Vars(req)["id"])
@@ -98,7 +98,7 @@ func ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	article, err := services.GetArticleService(articleID)
+	article, err := c.service.GetArticleService(articleID)
 	if err != nil {
 		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
 		return
@@ -107,13 +107,13 @@ func ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 // POST /article/nice の挙動確認用
-func PostNiceHandler(w http.ResponseWriter, req *http.Request) {
+func (c *MyAppController) PostNiceHandler(w http.ResponseWriter, req *http.Request) {
 	var reqArticle models.Article
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
 
-	article, err := services.PostNiceService(reqArticle)
+	article, err := c.service.PostNiceService(reqArticle)
 	if err != nil {
 		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
 		return
