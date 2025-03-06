@@ -5,22 +5,48 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/h-hiwatashi/go-api/app/handlers"
+	"github.com/h-hiwatashi/go-api/app/controllers"
 	"github.com/h-hiwatashi/go-api/app/models"
+	"github.com/h-hiwatashi/go-api/app/services"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
+var (
+	dbUser     = os.Getenv("MYSQL_DATABASE_USER")
+	dbPassword = os.Getenv("MYSQL_DATABASE_PASSWORD")
+	dbDatabase = os.Getenv("MYSQL_DATABASE")
+	dbConn     = fmt.Sprintf(
+		"%s:%s@tcp(go_api_mysql:3306)/%s?parseTime=true",
+		dbUser,
+		dbPassword,
+		dbDatabase,
+	)
+)
+
 func main() {
+	// 1. サーバー全体で使用する sql.DB 型を一つ生成する
+	db, err := sql.Open("mysql", dbConn)
+	if err != nil {
+		log.Println("fail to connect DB")
+		return
+	}
+	// 2. sql.DB 型をもとに、サーバー全体で使用するサービス構造体 MyAppService を一つ生成する
+	ser := services.NewMyAppService(db)
+	// 3. MyAppService 型をもとに、サーバー全体で使用するコントローラ構造体 MyAppControllerを一つ生成する
+	con := controllers.NewMyAppController(ser)
+	// 4. コントローラ型 MyAppController のハンドラメソッドとパスとの関連付けを行う
 	r := mux.NewRouter()
-	r.HandleFunc("/hello", handlers.HelloHandler).Methods(http.MethodGet)
-	r.HandleFunc("/article", handlers.PostArticleHandler).Methods(http.MethodPost)
-	r.HandleFunc("/article/list", handlers.ArticleListHandler).Methods(http.MethodGet)
-	r.HandleFunc("/article/{id:[0-9]+}", handlers.ArticleDetailHandler).Methods(http.MethodGet)
-	r.HandleFunc("/article/nice", handlers.PostNiceHandler).Methods(http.MethodPost)
-	r.HandleFunc("/comment", handlers.PostCommentHandler).Methods(http.MethodPost)
+	r.HandleFunc("/hello", con.HelloHandler).Methods(http.MethodGet)
+	r.HandleFunc("/article", con.PostArticleHandler).Methods(http.MethodPost)
+	r.HandleFunc("/article/list", con.ArticleListHandler).Methods(http.MethodGet)
+	r.HandleFunc("/article/{id:[0-9]}",
+		con.ArticleDetailHandler).Methods(http.MethodGet)
+	r.HandleFunc("/article/nice", con.PostNiceHandler).Methods(http.MethodPost)
+	r.HandleFunc("/comment", con.PostCommentHandler).Methods(http.MethodPost)
 
 	/// 標準パッケージ net/http だけで実装
 	// http.HandleFunc("/hello", handlers.HelloHandler)
@@ -34,16 +60,16 @@ func main() {
 	log.Println("server start at port 8080")
 
 	// DBの接続
-	dbUser := "user"
-	dbPassword := "user"
-	dbDatabase := "go_api_mysql"
-	dbConn := fmt.Sprintf("%s:%s@tcp(go_api_mysql:3306)/%s?parseTime=true", dbUser,
-		dbPassword, dbDatabase)
-	db, err := sql.Open("mysql", dbConn)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer db.Close()
+	// dbUser := "user"
+	// dbPassword := "user"
+	// dbDatabase := "go_api_mysql"
+	// dbConn := fmt.Sprintf("%s:%s@tcp(go_api_mysql:3306)/%s?parseTime=true", dbUser,
+	// 	dbPassword, dbDatabase)
+	// db, err := sql.Open("mysql", dbConn)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// defer db.Close()
 
 	// SQL実行
 	articleID := 1
@@ -73,7 +99,7 @@ func main() {
 	if createdTime.Valid {
 		article.CreatedAt = createdTime.Time
 	}
-	fmt.Printf("%+v\n", articleArray)
+	fmt.Printf("%v\n", articleArray)
 
 	// ListenAndServe 関数にて、サーバーを起動
 	// log.Fatal(http.ListenAndServe(":8080", nil))

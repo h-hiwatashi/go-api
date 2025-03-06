@@ -27,7 +27,7 @@ func NewMyAppController(s *services.MyAppService) *MyAppController {
 }
 
 // 他のパッケージからも参照可能な関数・変数・定数を作成するためには、その名前を大文字から始める必要があります
-func HelloHandler(w http.ResponseWriter, req *http.Request) {
+func (c *MyAppController) HelloHandler(w http.ResponseWriter, req *http.Request) {
 	// if req.Method == http.MethodGet {
 	// 	io.WriteString(w, "Hello, world!\n")
 	// } else {
@@ -122,12 +122,12 @@ func (c *MyAppController) PostNiceHandler(w http.ResponseWriter, req *http.Reque
 }
 
 // POST /comment
-func PostCommentHandler(w http.ResponseWriter, req *http.Request) {
+func (c *MyAppController) PostCommentHandler(w http.ResponseWriter, req *http.Request) {
 	var reqComment models.Comment
 	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
-	comment, err := services.PostCommentService(reqComment)
+	comment, err := c.service.PostCommentService(reqComment)
 	if err != nil {
 		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
 		return
