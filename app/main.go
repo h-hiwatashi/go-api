@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
 	"github.com/h-hiwatashi/go-api/app/controllers"
 	"github.com/h-hiwatashi/go-api/app/models"
+	"github.com/h-hiwatashi/go-api/app/routers"
 	"github.com/h-hiwatashi/go-api/app/services"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -39,14 +39,7 @@ func main() {
 	// 3. MyAppService 型をもとに、サーバー全体で使用するコントローラ構造体 MyAppControllerを一つ生成する
 	con := controllers.NewMyAppController(ser)
 	// 4. コントローラ型 MyAppController のハンドラメソッドとパスとの関連付けを行う
-	r := mux.NewRouter()
-	r.HandleFunc("/hello", con.HelloHandler).Methods(http.MethodGet)
-	r.HandleFunc("/article", con.PostArticleHandler).Methods(http.MethodPost)
-	r.HandleFunc("/article/list", con.ArticleListHandler).Methods(http.MethodGet)
-	r.HandleFunc("/article/{id:[0-9]}",
-		con.ArticleDetailHandler).Methods(http.MethodGet)
-	r.HandleFunc("/article/nice", con.PostNiceHandler).Methods(http.MethodPost)
-	r.HandleFunc("/comment", con.PostCommentHandler).Methods(http.MethodPost)
+	r := routers.NewRouter(con)
 
 	/// 標準パッケージ net/http だけで実装
 	// http.HandleFunc("/hello", handlers.HelloHandler)
