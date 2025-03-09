@@ -7,10 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/h-hiwatashi/go-api/app/controllers"
+	"github.com/h-hiwatashi/go-api/app/api"
 	"github.com/h-hiwatashi/go-api/app/models"
-	"github.com/h-hiwatashi/go-api/app/routers"
-	"github.com/h-hiwatashi/go-api/app/services"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -34,12 +32,8 @@ func main() {
 		log.Println("fail to connect DB")
 		return
 	}
-	// 2. sql.DB 型をもとに、サーバー全体で使用するサービス構造体 MyAppService を一つ生成する
-	ser := services.NewMyAppService(db)
-	// 3. MyAppService 型をもとに、サーバー全体で使用するコントローラ構造体 MyAppControllerを一つ生成する
-	con := controllers.NewMyAppController(ser)
 	// 4. コントローラ型 MyAppController のハンドラメソッドとパスとの関連付けを行う
-	r := routers.NewRouter(con)
+	r := api.NewRouter(db)
 
 	/// 標準パッケージ net/http だけで実装
 	// http.HandleFunc("/hello", handlers.HelloHandler)
