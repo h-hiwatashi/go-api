@@ -6,6 +6,7 @@ import (
 
 	"net/http"
 
+	"github.com/h-hiwatashi/go-api/app/apperrors"
 	"github.com/h-hiwatashi/go-api/app/models"
 
 	"github.com/h-hiwatashi/go-api/app/controllers/services"
@@ -26,6 +27,7 @@ func NewCommentController(s services.CommentServicer) *CommentController {
 func (c *CommentController) PostCommentHandler(w http.ResponseWriter, req *http.Request) {
 	var reqComment models.Comment
 	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
+		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
 	comment, err := c.service.PostCommentService(reqComment)
