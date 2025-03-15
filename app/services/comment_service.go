@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/h-hiwatashi/go-api/app/apperrors"
 	"github.com/h-hiwatashi/go-api/app/models"
 	"github.com/h-hiwatashi/go-api/app/repositories"
 )
@@ -10,6 +11,7 @@ import (
 func (s *MyAppService) PostCommentService(comment models.Comment) (models.Comment, error) {
 	newComment, err := repositories.InsertComment(s.db, comment)
 	if err != nil {
+		err = apperrors.InsertDataFailed.Wrap(err, "fail to record data")
 		return models.Comment{}, err
 	}
 

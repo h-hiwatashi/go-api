@@ -3,7 +3,6 @@ package services
 import (
 	"database/sql"
 	"errors"
-	"log"
 
 	"github.com/h-hiwatashi/go-api/app/apperrors"
 	"github.com/h-hiwatashi/go-api/app/models"
@@ -51,7 +50,12 @@ func (s *MyAppService) PostArticleService(article models.Article) (models.Articl
 func (s *MyAppService) GetArticleListService(page int) ([]models.Article, error) {
 	articleList, err := repositories.SelectArticleList(s.db, page)
 	if err != nil {
-		log.Printf("Error selecting article list: %v\n", err)
+		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
+		return nil, err
+	}
+
+	if len(articleList) == 0 {
+		err := apperrors.NAData.Wrap(ErrNoData, "no data")
 		return nil, err
 	}
 
@@ -64,6 +68,11 @@ func (s *MyAppService) PostNiceService(article models.Article) (models.Article, 
 	articleID := article.ID
 	err := repositories.UpdateNiceNum(s.db, articleID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = apperrors.NoTargetData.Wrap(err, "does not exist target data")
+			return models.Article{}, err
+		}
+		err = apperrors.UpdateDataFailed.Wrap(err, "fail to update nice count")
 		return models.Article{}, err
 	}
 	newArticle, err := repositories.SelectArticleDetail(s.db, articleID)
