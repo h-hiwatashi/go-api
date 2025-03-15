@@ -3,7 +3,9 @@ package apperrors
 type MyAppError struct {
 	ErrCode
 	Message string
-	Err     error // エラーチェーンのための内部エラー
+	Err     error `json:"-"` // エラーチェーンのための内部エラー
+	// Err フィールドに json:"-"というタグを付与することで、そのフィール
+	// ドは json エンコードされないようにすることができます
 }
 
 func (myErr *MyAppError) Error() string {
